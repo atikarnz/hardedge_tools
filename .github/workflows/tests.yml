@@ -8,12 +8,17 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
-    env:
-      # Blender ships its own Python with `bmesh`, which the tests require.
-      # Pinned to the addon's declared minimum (Blender 5.0+, see bl_info).
-      # Bump these together to test a different version, e.g. 5.1 -> SERIES "5.1".
-      BLENDER_VERSION: "5.0.1"
-      BLENDER_SERIES: "5.0"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Addon's declared minimum (bl_info "blender": (5, 0, 0)).
+          - blender_version: "5.0.1"
+            blender_series: "5.0"
+          # Latest 5.1 corrective release.
+          - blender_version: "5.1.2"
+            blender_series: "5.1"
+    name: Blender ${{ matrix.blender_version }}
     steps:
       - name: Checkout into a `hardedge_tools` package folder
         uses: actions/checkout@v4
@@ -27,14 +32,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/blender
-          key: blender-${{ env.BLENDER_VERSION }}-linux-x64
+          key: blender-${{ matrix.blender_version }}-linux-x64
 
       - name: Download Blender
         if: steps.cache-blender.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           mkdir -p ~/blender
-          url="https://download.blender.org/release/Blender${BLENDER_SERIES}/blender-${BLENDER_VERSION}-linux-x64.tar.xz"
+          url="https://download.blender.org/release/Blender${{ matrix.blender_series }}/blender-${{ matrix.blender_version }}-linux-x64.tar.xz"
           echo "Downloading $url"
           curl -fsSL "$url" | tar -xJ -C ~/blender --strip-components=1
 
