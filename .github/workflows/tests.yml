@@ -10,9 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Blender ships its own Python with `bmesh`, which the tests require.
-      # Bump this to match the Blender version you target (4.2 LTS used for CI).
-      BLENDER_VERSION: "4.2.3"
-      BLENDER_SERIES: "4.2"
+      # Pinned to the addon's declared minimum (Blender 5.0+, see bl_info).
+      # Bump these together to test a different version, e.g. 5.1 -> SERIES "5.1".
+      BLENDER_VERSION: "5.0.1"
+      BLENDER_SERIES: "5.0"
     steps:
       - name: Checkout into a `hardedge_tools` package folder
         uses: actions/checkout@v4
