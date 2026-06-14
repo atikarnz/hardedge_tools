@@ -1,51 +1,55 @@
+<p align="center">
+  <img src="docs/images/banner_v2.png" alt="HardEdge Tools" width="100%">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Blender-5.0%2B-3ddc84" alt="Blender 5.0+">
+  <img src="https://img.shields.io/badge/version-2.2.1-f4d03f" alt="Version 2.2.1">
+  <img src="https://img.shields.io/badge/category-Mesh-ff6b6b" alt="Category Mesh">
+</p>
+
 # HardEdge Tools
 
-HardEdge Tools is a Blender 5.0+ mesh addon for selecting, marking, previewing, and converting hard edges in edit mode.
+A Blender 5.0+ mesh addon for **selecting, marking, previewing, and converting hard edges** in edit mode — with a live viewport overlay and a game-ready prep pipeline.
 
-## Features
+<p align="center">
+  <img src="docs/images/hero_main.png" alt="HardEdge Tools highlighting hard edges on a hard-surface model" width="85%">
+</p>
 
-- Select hard edges by face angle.
-- Preview matching hard edges without changing selection.
-- Include boundary edges and existing sharp marks when selecting.
-- Select soft edges, sharp-marked edges, and hard-edge loops.
-- Mark hard edges as Sharp or clear Sharp marks.
-- Convert hard edges or Sharp marks to UV seams.
-- Preserve existing UV seams by default.
-- Assign bevel weights to hard edges or selected edges.
-- Show a viewport hard-edge highlight overlay.
-- Show simple edge and face measurements in edit mode.
-- Run game-ready prep and batch sharp marking tools.
+## Highlights
+
+- **Angle-based selection** — find hard edges by the angle between adjacent faces, with optional boundary edges and length filtering.
+- **Non-destructive preview** — inspect matching edges before touching your selection; toggle it off just as fast.
+- **Mark & convert** — mark Sharp, push to UV seams, or assign bevel weights, all while preserving your existing seam layout by default.
+- **Viewport overlay** — a green→red gradient highlight shows edge hardness at a glance, plus optional edge/face measurements.
+- **Game-ready pipeline** — batch sharp-marking and one-click prep for clean exports.
+- Lives in `View3D > Sidebar > Hard Edges` and the **Ctrl+E** edge menu.
 
 ## Install
 
-1. Zip the `hardedge_tools` folder.
-2. In Blender, open `Edit > Preferences > Add-ons`.
-3. Click `Install`, choose the zip file, and enable `HardEdge Tools`.
-4. Open a mesh in edit mode and use `View3D > Sidebar > Hard Edges`.
-
-For development, copy or symlink this folder to:
-
-```text
-%APPDATA%\Blender Foundation\Blender\5.x\scripts\addons\
-```
+1. Download `hardedge_tools-2.2.1.zip` (or zip the `hardedge_tools` folder).
+2. In Blender: `Edit > Preferences > Add-ons > Install…`
+3. Choose the zip and enable **HardEdge Tools**.
+4. Enter edit mode on a mesh and open the **Hard Edges** sidebar tab.
 
 ## Basic Workflow
 
-1. Select a mesh and enter edit mode.
-2. Set the angle threshold in the Hard Edges panel.
-3. Click `Preview` to inspect matching hard edges without changing the mesh. Click it again to hide the preview.
-4. Click `Select` to select matching hard edges.
-5. Click `Mark` to mark matching edges as Sharp.
-6. Keep `Preserve Existing Seams` enabled if you want seam conversion tools to add seams without clearing the current UV seam layout.
-7. Use `Hard Edges -> UV Seams` or `Sharp Marks -> UV Seams` when preparing UV cuts.
+1. Set the angle threshold in the Hard Edges panel.
+2. **Preview** to inspect matching edges, then **Select** to grab them.
+3. **Mark** them Sharp, or send them to **UV Seams** / **Bevel Weights**.
+4. Run **Game-Ready Prep** when you're ready to export.
 
-## Notes
+## Functions
 
-- Boundary edges count as hard edges when `Include Boundary` is enabled.
-- `Preserve Existing Seams` is enabled by default.
-- Disable `Preserve Existing Seams` only when you want seam conversion to replace the current seam set.
-- After replacing addon files, use Blender's `F3 > Reload Scripts` command or restart Blender.
+Each clip is captured live in Blender — the sidebar panel and the resulting edges.
 
-## Version
+| | |
+|---|---|
+| **Select Hard Edges** — select every edge over the angle threshold | **Mark as Sharp** — flat normals → marked Sharp fixes the shading (cyan) |
+| <img src="docs/images/func1_select_hard_edges.gif" width="100%"> | <img src="docs/images/func3_mark_sharp.gif" width="100%"> |
+| **Hard Edges → UV Seams** — convert hard edges to seams (red) | **Set Bevel Weights** — assign bevel weight to hard edges (blue) |
+| <img src="docs/images/func4_hard_to_seams.gif" width="100%"> | <img src="docs/images/func5_bevel_weights.gif" width="100%"> |
 
-Current version: `2.1.3`
+## License
+
+See [LICENSE](LICENSE).
