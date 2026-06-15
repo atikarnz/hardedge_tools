@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner_v4.png" alt="HardEdge Tools" width="100%">
+  <img src="docs/images/banner_v4.webp" alt="HardEdge Tools" width="100%">
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
 A Blender 5.0+ mesh addon for **selecting, marking, previewing, and converting hard edges** in edit mode — with a live viewport overlay and a game-ready prep pipeline.
 
 <p align="center">
-  <img src="docs/images/hero_main.png" alt="HardEdge Tools highlighting hard edges on a hard-surface model" width="85%">
+  <img src="docs/images/hero_main.webp" alt="HardEdge Tools highlighting hard edges on a hard-surface model" width="85%">
 </p>
 
 ## Highlights
@@ -52,4 +52,4 @@ Each clip is captured live in Blender — the sidebar panel and the resulting ed
 
 ## License
 
-See [LICENSE](LICENSE).
+See [LICENSE](LICENSE)
