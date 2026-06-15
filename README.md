@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner_v3.png" alt="HardEdge Tools" width="100%">
+  <img src="docs/images/banner_v4.png" alt="HardEdge Tools" width="100%">
 </p>
 
 <p align="center">
