@@ -14,4 +14,13 @@ dist/
 docs/images/src/
 
 # Test / coverage
-.pytest_cach
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
