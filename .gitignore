@@ -10,14 +10,8 @@ dist/
 # Build / distribution artifacts
 *.zip
 
-# Test / coverage
-.pytest_cache/
-.coverage
-htmlcov/
+# Raw image sources (only the optimized .webp are committed)
+docs/images/src/
 
-# Editor / OS
-.vscode/
-.idea/
-*.swp
-.DS_Store
-Thumbs.db
+# Test / coverage
+.pytest_cach
