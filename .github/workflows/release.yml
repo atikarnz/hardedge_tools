@@ -1,0 +1,60 @@
+name: release
+
+# Build the installable addon zip and publish a GitHub Release whenever a
+# version tag (e.g. v2.2.2) is pushed. The zip is named so Blender's
+# "Install from Disk" sees a top-level `hardedge_tools/` package folder.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build addon zip
+        id: build
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          # The repo root IS the addon package; stage it inside a folder named
+          # `hardedge_tools` so the zip installs cleanly in Blender. Repo meta,
+          # CI, docs images and stray zips are excluded from the distributable.
+          mkdir -p "dist/hardedge_tools"
+          rsync -a \
+            --exclude='.git' --exclude='.github' --exclude='dist' \
+            --exclude='docs' --exclude='*.zip' \
+            --exclude='__pycache__' --exclude='*.pyc' \
+            ./ "dist/hardedge_tools/"
+          ( cd dist && zip -rq "hardedge_tools-${version}.zip" hardedge_tools )
+          echo "Built dist/hardedge_tools-${version}.zip"
+
+      - name: Extract changelog section for these release notes
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          # Pull the "## <version> ..." block out of CHANGELOG.md as the body.
+          awk -v hdr="## ${version}" '
+            index($0, hdr) == 1 { capture = 1; next }
+            /^## / && capture     { exit }
+            capture               { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "See [CHANGELOG.md](CHANGELOG.md)." > RELEASE_NOTES.md
+          fi
+          echo "----- release notes -----"
+          cat RELEASE_NOTES.md
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: v${{ steps.build.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: dist/hardedge_tools-*.zip
