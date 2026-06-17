@@ -42,18 +42,23 @@ _overlay_cache = {
 }
 
 
+def mark_overlay_dirty(*_args, **_kwargs):
+    """Invalidate the cached batch so it gets rebuilt on the next draw.
+
+    Public entry point used by PropertyGroup update callbacks. Clears only the
+    batch/validity; the obj_ptr and props_sig keys are re-checked (and
+    overwritten) on the next draw, so there's no need to wipe them here.
+    """
+    _overlay_cache["batch"] = None
+    _overlay_cache["valid"] = False
+
+
 def _invalidate_overlay_cache():
-    _overlay_cache["batch"]     = None
+    """Full reset, including the cache-key fields. Used on unregister."""
+    mark_overlay_dirty()
     _overlay_cache["shader"]    = None
     _overlay_cache["obj_ptr"]   = None
     _overlay_cache["props_sig"] = None
-    _overlay_cache["valid"]     = False
-
-
-def mark_overlay_dirty(*_args, **_kwargs):
-    """Public invalidator used by PropertyGroup update callbacks."""
-    _overlay_cache["batch"] = None
-    _overlay_cache["valid"] = False
 
 
 def _props_signature(p):
@@ -163,10 +168,40 @@ def _draw_custom_measurements():
     if region is None or rv3d is None:
         return
 
-    bm    = bmesh.from_edit_mesh(obj.data)
+    # This handler runs on every POST_PIXEL redraw, so we must avoid scanning
+    # the whole mesh each frame. `total_edge_sel` / `total_face_sel` are cheap
+    # counters Blender keeps up to date, letting us skip the bmesh edge/face
+    # iteration entirely whenever nothing relevant is selected (the common case).
+    mesh = obj.data
+    need_edges = (show_len or show_eang) and mesh.total_edge_sel > 0
+    need_faces = (show_fang or show_farea) and mesh.total_face_sel > 0
+    if not (need_edges or need_faces):
+        return
+
+    fid = 0
+
+    # Hard ceiling on label count. Each label is re-projected and redrawn every
+    # frame, so a big selection on a dense mesh would otherwise grind the
+    # viewport to a crawl. Past the limit we draw a single warning instead.
+    limit    = props.custom_measure_label_limit
+    sel_count = (mesh.total_edge_sel if need_edges else 0) \
+              + (mesh.total_face_sel if need_faces else 0)
+    if limit > 0 and sel_count > limit:
+        msg = (f"HardEdge: {sel_count} selected — measurement labels hidden "
+               f"(limit {limit}) to keep the viewport responsive")
+        blf.size(fid, max(props.custom_measure_font_size, 14))
+        blf.enable(fid, blf.SHADOW)
+        blf.shadow(fid, 3, 0.0, 0.0, 0.0, 0.9)
+        blf.color(fid, 1.0, 0.7, 0.1, 1.0)  # amber warning
+        tw, _th = blf.dimensions(fid, msg)
+        blf.position(fid, max(10.0, (region.width - tw) / 2.0), region.height - 40.0, 0)
+        blf.draw(fid, msg)
+        blf.disable(fid, blf.SHADOW)
+        return
+
+    bm    = bmesh.from_edit_mesh(mesh)
     mat   = obj.matrix_world
     scale = context.scene.unit_settings.scale_length
-    fid   = 0
     lh    = props.custom_measure_font_size + 2
     blf.size(fid, props.custom_measure_font_size)
     blf.enable(fid, blf.SHADOW)
@@ -178,7 +213,7 @@ def _draw_custom_measurements():
             blf.position(fid, p2d.x + 6, p2d.y + 4 + i * lh, 0)
             blf.draw(fid, txt)
 
-    if show_len or show_eang:
+    if need_edges:
         bm.edges.ensure_lookup_table()
         for edge in bm.edges:
             if not edge.select:
@@ -197,7 +232,7 @@ def _draw_custom_measurements():
                     lines.append(f"{math.degrees(a):.1f}")
             draw_stack(p2d, lines)
 
-    if show_fang or show_farea:
+    if need_faces:
         bm.faces.ensure_lookup_table()
         for face in bm.faces:
             if not face.select:

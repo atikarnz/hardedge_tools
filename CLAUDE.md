@@ -3,7 +3,7 @@
 **Author:** atikarnz  
 **Blender:** 5.0+  
 **Category:** Mesh  
-**Version:** 2.2.1
+**Version:** 2.2.2
 
 ## Project Structure
 

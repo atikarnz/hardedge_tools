@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.2.2 — 2026-06-17
+
+Performance + correctness pass driven by the latest code/UI review.
+
+### Fixed
+- **Viewport lag from the 1dp measurement overlay.** The measurement draw
+  handler scanned the whole mesh every frame. It now early-outs using
+  Blender's `total_edge_sel` / `total_face_sel` counters, and caps work via a
+  new **Label Limit** (default 500): past the limit the per-element labels are
+  hidden and a single viewport warning is drawn instead, keeping dense meshes
+  responsive.
+- **Select Soft Edges** now honours **Extend Selection** and excludes boundary
+  edges (a single-face edge could previously count as both not-hard and soft).
+- **Hard-edge loop expansion** now stops at non-manifold edges, matching its
+  documented behaviour.
+- Unified the two overlay-cache invalidators and completed the backwards-compat
+  helper aliases in `utils`.
+
+### Added
+- **Label Limit** control and an in-panel warning in *Geometry & Measurements*
+  noting that measurement labels redraw every frame.
+
+### Changed
+- Angle preset buttons show full names in a 2-wide grid instead of truncating
+  (e.g. "Hard Surface" was shown as "Hard").
+- The empty "Edit Mode Overlays" parent panel now shows an orientation hint.
+- Panel "to UV Seams" buttons use ASCII `->` to avoid font-fallback glyph issues.
+
 ## 2.2.1 — 2026-05-12
 
 ### Fixed

@@ -71,7 +71,10 @@ class MESH_OT_select_soft_edges(bpy.types.Operator):
         obj = context.active_object
         p   = context.scene.hard_edge_props
         context.tool_settings.mesh_select_mode = (False, True, False)
-        bpy.ops.mesh.select_all(action='DESELECT')
+        # Mirror the hard-edge op: respect Extend Selection instead of always
+        # clearing, so the two selection tools behave consistently.
+        if not p.extend_selection:
+            bpy.ops.mesh.select_all(action='DESELECT')
         bm = edit_bmesh(obj)
         hard_ids = {e.index for e, _ in props_to_hard_edges(bm, p)}
 
@@ -83,6 +86,10 @@ class MESH_OT_select_soft_edges(bpy.types.Operator):
         count = 0
         for edge in bm.edges:
             if edge.index in hard_ids:
+                continue
+            # A single-face (boundary) edge isn't meaningfully "soft"; exclude it
+            # so it can't be selected as both not-hard and soft.
+            if len(edge.link_faces) < 2:
                 continue
             if length_filter_active:
                 length = edge.calc_length()

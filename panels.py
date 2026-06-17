@@ -24,11 +24,13 @@ class VIEW3D_PT_hard_edges(bpy.types.Panel):
         row.scale_y = 1.2
         row.prop(props, "angle_threshold", slider=True)
 
-        row = layout.row(align=True)
-        for name in PRESET_DATA:
-            op = row.operator("mesh.apply_hard_edge_preset",
-                              text=name.split()[0], icon='DOT')
-            op.preset = name
+        col = layout.column(align=True)
+        for i in range(0, len(PRESET_DATA), 2):
+            row = col.row(align=True)
+            for name in list(PRESET_DATA)[i:i + 2]:
+                op = row.operator("mesh.apply_hard_edge_preset",
+                                  text=name, icon='DOT')
+                op.preset = name
 
         layout.separator(factor=0.3)
 
@@ -108,10 +110,10 @@ class VIEW3D_PT_hard_edges_sharp(bpy.types.Panel):
         col.separator()
         col.prop(props, "preserve_existing_seams", icon='UV')
         op = col.operator("mesh.hard_edges_to_seams",
-                          icon='UV', text="Hard Edges → UV Seams")
+                          icon='UV', text="Hard Edges -> UV Seams")
         op.clear_existing = not props.preserve_existing_seams
         op = col.operator("mesh.sharp_to_seams",
-                          icon='EDGE_SEAM', text="Sharp Marks → UV Seams")
+                          icon='EDGE_SEAM', text="Sharp Marks -> UV Seams")
         op.clear_existing = not props.preserve_existing_seams
         col.separator()
         col.prop(props, "bevel_weight", slider=True, text="Weight")
@@ -159,9 +161,9 @@ class VIEW3D_PT_hard_edges_overlays(bpy.types.Panel):
     bl_options     = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        # Intentionally empty — this panel exists only as a header / parent
-        # for the child panels below.
-        pass
+        # This panel is mainly a parent/header for the child panels below, but
+        # an empty body reads as "broken", so give it a one-line orientation hint.
+        self.layout.label(text="Toggle viewport overlays below", icon='OVERLAY')
 
 
 class VIEW3D_PT_ov_highlight(bpy.types.Panel):
@@ -263,6 +265,13 @@ class VIEW3D_PT_ov_geometry(bpy.types.Panel):
         sub.active = any_on
         sub.prop(props, "custom_measure_font_size",  text="Font Size",  slider=True)
         sub.prop(props, "custom_measure_font_color", text="Color")
+        sub.prop(props, "custom_measure_label_limit", text="Label Limit")
+        if any_on:
+            box = col.box()
+            wcol = box.column(align=True)
+            wcol.label(text="Labels redraw every frame.", icon='ERROR')
+            wcol.label(text="Large selections lag dense meshes —")
+            wcol.label(text="labels auto-hide past the Label Limit.")
 
 
 # ══════════════════════════════════════════════════════════════════

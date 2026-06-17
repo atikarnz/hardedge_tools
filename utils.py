@@ -37,6 +37,8 @@ def edge_face_angle(edge) -> Optional[float]:
     linked = edge.link_faces
     if len(linked) == 2:
         n1, n2 = linked[0].normal, linked[1].normal
+        # A degenerate (zero-area) face has a zero-length normal; we can't form
+        # a meaningful angle from it, so report None (treated as not-hard).
         if n1.length > 0 and n2.length > 0:
             dot = max(-1.0, min(1.0, n1.dot(n2)))
             return math.acos(dot)
@@ -160,6 +162,11 @@ def expand_edge_loops(bm) -> None:
                 return
             nxt_loop = loop.link_loop_next.link_loop_next
             nxt_edge = nxt_loop.edge
+            # Stop at non-manifold edges (boundary = 1 face, or 3+ faces) — a
+            # loop is only well-defined across exactly two quad faces. Without
+            # this guard _cross() would pick an arbitrary neighbouring face.
+            if len(nxt_edge.link_faces) != 2:
+                return
             if nxt_edge in visited:
                 return
             visited.add(nxt_edge)
@@ -183,5 +190,10 @@ def expand_edge_loops(bm) -> None:
 
 _poll_edit_mesh      = poll_edit_mesh
 _edit_bmesh          = edit_bmesh
+_get_hard_edges      = get_hard_edges
 _props_to_hard_edges = props_to_hard_edges
 _get_bevel_layer     = get_bevel_layer
+_edge_face_angle     = edge_face_angle
+_angle_to_color      = angle_to_color
+_fill_select_op_props = fill_select_op_props
+_expand_edge_loops   = expand_edge_loops

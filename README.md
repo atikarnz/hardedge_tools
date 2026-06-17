@@ -52,4 +52,4 @@ Each clip is captured live in Blender — the sidebar panel and the resulting ed
 
 ## License
 
-See [LICENSE](LICENSE)
+See [LICENSE](LICENSE).

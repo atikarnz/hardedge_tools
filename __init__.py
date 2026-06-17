@@ -1,7 +1,7 @@
 bl_info = {
     "name": "HardEdge Tools",
     "author": "atikarnz",
-    "version": (2, 2, 1),
+    "version": (2, 2, 2),
     "blender": (5, 0, 0),
     "location": "View3D > Sidebar > Hard Edges  |  Edit Mode > Edge menu (Ctrl+E)",
     "description": "Select hard edges by angle with overlay, UV tools, and game-ready pipeline",

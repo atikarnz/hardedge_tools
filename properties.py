@@ -73,6 +73,12 @@ class HardEdgeProperties(bpy.types.PropertyGroup):
     custom_measure_font_color: FloatVectorProperty(name="Color", subtype='COLOR',
                             default=(1.0, 1.0, 0.2), min=0.0, max=1.0, size=3,
                             description="Color of measurement labels")
+    custom_measure_label_limit: IntProperty(name="Label Limit", default=500, min=0, max=100000,
+                            description="Maximum number of selected elements to label at once. "
+                                        "Measurement labels are re-projected and redrawn every "
+                                        "frame, so a large selection on a dense mesh slows the "
+                                        "viewport. Above this count the labels are hidden and a "
+                                        "viewport warning is shown instead. Set to 0 to never cap")
 
     # Bevel weight assigned by "Set Bevel Weights"
     bevel_weight:        FloatProperty(name="Bevel Weight", default=1.0, min=0.0, max=1.0,
